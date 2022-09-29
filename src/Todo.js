@@ -1,18 +1,17 @@
-import { useState } from "react";
 import React from "react";
 
-const Todo = ({ todo }) => {
-  const [checked, setChecked] = useState(todo.complete);
-
+const Todo = ({ todo, handleCompleteTodos }) => {
   return (
-    <label>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={() => setChecked(!checked)}
-      />
-      {todo.name}
-    </label>
+    <li>
+      <label>
+        <input
+          type="checkbox"
+          checked={todo.complete}
+          onChange={() => handleCompleteTodos(todo.id)}
+        />
+        {todo.name}
+      </label>
+    </li>
   );
 };
 

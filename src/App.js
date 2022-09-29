@@ -6,23 +6,19 @@ import { v4 } from "uuid";
 const LOCAL_STORAGE_KEY = "todoApp.todos";
 
 function App() {
-  const [todos, setTodos] = useState([]);
+  const localTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+  const [todos, setTodos] = useState(localTodos || []);
   const todoNameRef = useRef();
 
-  console.log(todos, "outer");
-
   useEffect(() => {
-    console.log(todos, "1");
-    const storedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-
-    if (storedTodos) setTodos(storedTodos);
-    console.log(todos, "11");
-  }, []);
-
-  useEffect(() => {
-    console.log(todos, "2");
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
   }, [todos]);
+
+  // useEffect(() => {
+  //   const storedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+  //   if (storedTodos) setTodos(storedTodos);
+  //   console.log(todos);
+  // }, []);
 
   function handleAddTodo(e) {
     e.preventDefault();
@@ -34,20 +30,38 @@ function App() {
     todoNameRef.current.value = null;
   }
 
-  function handleClearTodos() {
-    // e.preventDefault();
+  function handleCompleteTodos(id) {
+    const newTodos = [...todos];
+    const todo = newTodos.find((todo) => todo.id === id);
+    todo.complete = !todo.complete;
+    setTodos(newTodos);
+  }
+
+  function handleClearTodos(e) {
+    e.preventDefault();
     const newTodos = todos.filter((todo) => !todo.complete);
     setTodos(newTodos);
   }
 
   return (
-    <>
-      <TodoList todos={todos} />
-      <input ref={todoNameRef}></input>
-      <button onClick={handleAddTodo}>Add Todo</button>
-      <button onClick={handleClearTodos}>Clear Completed Todos</button>
-      <p>{todos.filter((todo) => !todo.complete).length} left to do</p>
-    </>
+    <main className="app">
+      <header className="header">
+        <h1>Todo List</h1>
+        <input ref={todoNameRef}></input>
+        <button onClick={handleAddTodo} className="addBtn">
+          Add Todo
+        </button>
+      </header>
+      <ul>
+        <TodoList todos={todos} handleCompleteTodos={handleCompleteTodos} />
+      </ul>
+      <p className="left">
+        {todos.filter((todo) => !todo.complete).length} left to do
+      </p>
+      <button onClick={handleClearTodos} className="clearBtn">
+        Clear Completed Todos
+      </button>
+    </main>
   );
 }
 
