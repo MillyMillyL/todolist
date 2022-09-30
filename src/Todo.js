@@ -1,9 +1,9 @@
 import React from "react";
 
-const Todo = ({ todo, handleCompleteTodos }) => {
+const Todo = ({ todo, handleCompleteTodos, handleCancelTodo }) => {
   return (
     <li>
-      <label>
+      <label className={todo.complete ? "completed" : ""}>
         <input
           type="checkbox"
           checked={todo.complete}
@@ -11,6 +11,9 @@ const Todo = ({ todo, handleCompleteTodos }) => {
         />
         {todo.name}
       </label>
+      <button className="cancelBtn" onClick={() => handleCancelTodo(todo.id)}>
+        Cancel
+      </button>
     </li>
   );
 };

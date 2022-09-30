@@ -125,3 +125,17 @@ label input {
   margin: 1rem 0;
   color: red;
 }
+
+.completed {
+  text-decoration: line-through;
+}
+
+.cancelBtn {
+  position: relative;
+  float: right;
+}
+
+.cancelBtn:hover {
+  background-color: red;
+  color: white;
+}

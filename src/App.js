@@ -24,9 +24,11 @@ function App() {
     e.preventDefault();
     const name = todoNameRef.current.value;
     if (name === "") return;
+
     setTodos((prev) => {
       return [...prev, { id: v4(), name: name, complete: false }];
     });
+
     todoNameRef.current.value = null;
   }
 
@@ -43,6 +45,10 @@ function App() {
     setTodos(newTodos);
   }
 
+  function handleCancelTodo(id) {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  }
+
   return (
     <main className="app">
       <header className="header">
@@ -53,10 +59,14 @@ function App() {
         </button>
       </header>
       <ul>
-        <TodoList todos={todos} handleCompleteTodos={handleCompleteTodos} />
+        <TodoList
+          todos={todos}
+          handleCompleteTodos={handleCompleteTodos}
+          handleCancelTodo={handleCancelTodo}
+        />
       </ul>
       <p className="left">
-        {todos.filter((todo) => !todo.complete).length} left to do
+        {todos.filter((todo) => !todo.complete).length} uncompleted tasks to do
       </p>
       <button onClick={handleClearTodos} className="clearBtn">
         Clear Completed Todos
