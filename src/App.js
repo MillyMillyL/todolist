@@ -1,57 +1,25 @@
 import TodoList from "./component/TodoList";
 import "./index.css";
-import React, { useRef, useEffect } from "react";
-import { v4 } from "uuid";
-import { useReducer } from "react";
-
+import React, { useEffect, useReducer, useState } from "react";
+import { todosReducer } from "./todosReducer";
 const LOCAL_STORAGE_KEY = "todoApp.todos";
 
 function App() {
   const localTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
   const [todos, dispatch] = useReducer(todosReducer, localTodos || []);
-  const todoNameRef = useRef();
+  const [todoInput, setTodoInput] = useState("");
 
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
   }, [todos]);
 
-  function todosReducer(todos, action) {
-    switch (action.type) {
-      case "add":
-        return [
-          ...todos,
-          { id: v4(), name: action.payload.name, complete: false },
-        ];
-      case "cancel":
-        return todos.filter((todo) => todo.id !== action.payload.id);
-      case "clear":
-        return todos.filter((todo) => !todo.complete);
-      case "complete":
-        return todos.map((todo) => {
-          if (todo.id === action.payload.id) {
-            return { ...todo, complete: !todo.complete };
-          }
-          return todo;
-        });
-      default:
-        console.log(todos, "todos");
-        return todos;
-    }
-  }
-
   function handleAddTodo(e) {
     e.preventDefault();
-    const name = todoNameRef.current.value;
-    if (name === "") return;
-    dispatch({ type: "add", payload: { name: todoNameRef.current.value } });
-    todoNameRef.current.value = null;
+    dispatch({ type: "add", payload: { name: todoInput } });
+    setTodoInput("");
   }
 
   function handleCompleteTodos(id) {
-    // const newTodos = [...todos];
-    // const todo = newTodos.find((todo) => todo.id === id);
-    // todo.complete = !todo.complete;
-    // setTodos(newTodos);
     dispatch({ type: "complete", payload: { id: id } });
   }
 
@@ -68,7 +36,10 @@ function App() {
     <main className="app">
       <header className="header">
         <h1>Todo List</h1>
-        <input ref={todoNameRef}></input>
+        <input
+          value={todoInput}
+          onChange={(e) => setTodoInput(e.target.value)}
+        ></input>
         <button onClick={handleAddTodo} className="addBtn">
           Add Todo
         </button>
