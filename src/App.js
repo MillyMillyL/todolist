@@ -1,52 +1,67 @@
-import TodoList from "./TodoList";
+import TodoList from "./component/TodoList";
 import "./index.css";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { v4 } from "uuid";
+import { useReducer } from "react";
 
 const LOCAL_STORAGE_KEY = "todoApp.todos";
 
 function App() {
   const localTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-  const [todos, setTodos] = useState(localTodos || []);
+  const [todos, dispatch] = useReducer(todosReducer, localTodos || []);
   const todoNameRef = useRef();
 
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
   }, [todos]);
 
-  // useEffect(() => {
-  //   const storedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-  //   if (storedTodos) setTodos(storedTodos);
-  //   console.log(todos);
-  // }, []);
+  function todosReducer(todos, action) {
+    switch (action.type) {
+      case "add":
+        return [
+          ...todos,
+          { id: v4(), name: action.payload.name, complete: false },
+        ];
+      case "cancel":
+        return todos.filter((todo) => todo.id !== action.payload.id);
+      case "clear":
+        return todos.filter((todo) => !todo.complete);
+      case "complete":
+        return todos.map((todo) => {
+          if (todo.id === action.payload.id) {
+            return { ...todo, complete: !todo.complete };
+          }
+          return todo;
+        });
+      default:
+        console.log(todos, "todos");
+        return todos;
+    }
+  }
 
   function handleAddTodo(e) {
     e.preventDefault();
     const name = todoNameRef.current.value;
     if (name === "") return;
-
-    setTodos((prev) => {
-      return [...prev, { id: v4(), name: name, complete: false }];
-    });
-
+    dispatch({ type: "add", payload: { name: todoNameRef.current.value } });
     todoNameRef.current.value = null;
   }
 
   function handleCompleteTodos(id) {
-    const newTodos = [...todos];
-    const todo = newTodos.find((todo) => todo.id === id);
-    todo.complete = !todo.complete;
-    setTodos(newTodos);
+    // const newTodos = [...todos];
+    // const todo = newTodos.find((todo) => todo.id === id);
+    // todo.complete = !todo.complete;
+    // setTodos(newTodos);
+    dispatch({ type: "complete", payload: { id: id } });
   }
 
   function handleClearTodos(e) {
     e.preventDefault();
-    const newTodos = todos.filter((todo) => !todo.complete);
-    setTodos(newTodos);
+    dispatch({ type: "clear" });
   }
 
   function handleCancelTodo(id) {
-    setTodos(todos.filter((todo) => todo.id !== id));
+    dispatch({ type: "cancel", payload: { id: id } });
   }
 
   return (
@@ -66,7 +81,7 @@ function App() {
         />
       </ul>
       <p className="left">
-        {todos.filter((todo) => !todo.complete).length} uncompleted tasks to do
+        {todos?.filter((todo) => !todo.complete).length} uncompleted tasks to do
       </p>
       <button onClick={handleClearTodos} className="clearBtn">
         Clear Completed Todos
