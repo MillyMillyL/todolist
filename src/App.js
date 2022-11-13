@@ -1,13 +1,17 @@
-import TodoList from "./component/TodoList";
-import "./index.css";
 import React, { useEffect, useReducer, useState } from "react";
+
+import TodoList from "./component/TodoList";
 import { todosReducer } from "./todosReducer";
+import "./index.css";
 const LOCAL_STORAGE_KEY = "todoApp.todos";
+const TODAY = new Date().toString().slice(0, 15);
 
 function App() {
   const localTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
   const [todos, dispatch] = useReducer(todosReducer, localTodos || []);
   const [todoInput, setTodoInput] = useState("");
+
+  console.log(todos);
 
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
@@ -15,7 +19,8 @@ function App() {
 
   function handleAddTodo(e) {
     e.preventDefault();
-    dispatch({ type: "add", payload: { name: todoInput } });
+    if (todoInput.trim() === "") return;
+    dispatch({ type: "add", payload: { name: todoInput.trim() } });
     setTodoInput("");
   }
 
@@ -32,6 +37,10 @@ function App() {
     dispatch({ type: "cancel", payload: { id: id } });
   }
 
+  function handleEditConfirm(id, inputData) {
+    dispatch({ type: "editConfirm", payload: { id: id, name: inputData } });
+  }
+
   return (
     <main className="app">
       <header className="header">
@@ -44,11 +53,13 @@ function App() {
           Add Todo
         </button>
       </header>
+      <p>Today {TODAY} </p>
       <ul>
         <TodoList
           todos={todos}
           handleCompleteTodos={handleCompleteTodos}
           handleCancelTodo={handleCancelTodo}
+          handleEditConfirm={handleEditConfirm}
         />
       </ul>
       <p className="left">

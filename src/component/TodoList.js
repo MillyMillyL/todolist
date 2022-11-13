@@ -1,7 +1,13 @@
 import React from "react";
 import Todo from "./Todo";
 
-const TodoList = ({ todos, handleCompleteTodos, handleCancelTodo }) => {
+const TodoList = ({
+  todos,
+  handleCompleteTodos,
+  handleCancelTodo,
+  handleEditTodo,
+  handleEditConfirm,
+}) => {
   return todos?.map((todo) => {
     return (
       <Todo
@@ -9,6 +15,8 @@ const TodoList = ({ todos, handleCompleteTodos, handleCancelTodo }) => {
         key={todo.id}
         handleCompleteTodos={handleCompleteTodos}
         handleCancelTodo={handleCancelTodo}
+        handleEditTodo={handleEditTodo}
+        handleEditConfirm={handleEditConfirm}
       />
     );
   });

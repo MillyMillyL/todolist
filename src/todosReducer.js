@@ -18,8 +18,15 @@ export function todosReducer(todos, action) {
         }
         return todo;
       });
+
+    case "editConfirm":
+      return todos.map((todo) => {
+        if (todo.id === action.payload.id) {
+          return { ...todo, name: action.payload.name };
+        }
+        return todo;
+      });
     default:
-      console.log(todos, "todos");
       return todos;
   }
 }
