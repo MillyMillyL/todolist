@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import TodosContext from "../TodosContext";
 
-const EditTodoForm = ({ todo, handleEditConfirm, setIsEdit }) => {
+const EditTodoForm = ({ todo, setIsEdit }) => {
   const [editTodoInput, setEditTodoInput] = useState(todo.name);
+  const todosCtx = useContext(TodosContext);
 
   const inputChangeHandler = (e) => {
     setEditTodoInput(e.target.value);
@@ -13,7 +15,7 @@ const EditTodoForm = ({ todo, handleEditConfirm, setIsEdit }) => {
       <button
         onClick={() => {
           setIsEdit(false);
-          handleEditConfirm(todo.id, editTodoInput);
+          todosCtx.handleEditConfirm(todo.id, editTodoInput);
         }}
       >
         Confirm

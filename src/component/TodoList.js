@@ -1,24 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
+import TodosContext from "../TodosContext";
 import Todo from "./Todo";
 
-const TodoList = ({
-  todos,
-  handleCompleteTodos,
-  handleCancelTodo,
-  handleEditTodo,
-  handleEditConfirm,
-}) => {
-  return todos?.map((todo) => {
-    return (
-      <Todo
-        todo={todo}
-        key={todo.id}
-        handleCompleteTodos={handleCompleteTodos}
-        handleCancelTodo={handleCancelTodo}
-        handleEditTodo={handleEditTodo}
-        handleEditConfirm={handleEditConfirm}
-      />
-    );
+const TodoList = ({}) => {
+  const todosCtx = useContext(TodosContext);
+
+  return todosCtx.todos?.map((todo) => {
+    return <Todo todo={todo} key={todo.id} />;
   });
 };
 

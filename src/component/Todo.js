@@ -3,15 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import EditTodoForm from "./EditTodoForm";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import TodosContext from "../TodosContext";
 
-const Todo = ({
-  todo,
-  handleCompleteTodos,
-  handleCancelTodo,
-  handleEditConfirm,
-}) => {
+const Todo = ({ todo }) => {
   const [isEdit, setIsEdit] = useState(false);
+  const todosCtx = useContext(TodosContext);
 
   return (
     <>
@@ -21,14 +18,14 @@ const Todo = ({
             <input
               type="checkbox"
               checked={todo.complete}
-              onChange={() => handleCompleteTodos(todo.id)}
+              onChange={() => todosCtx.handleCompleteTodos(todo.id)}
             />
             {todo.name}
           </label>
           <FontAwesomeIcon
             icon={faXmark}
             className="cancelBtn"
-            onClick={() => handleCancelTodo(todo.id)}
+            onClick={() => todosCtx.handleCancelTodo(todo.id)}
           />
           <FontAwesomeIcon
             icon={faPencil}
@@ -38,13 +35,7 @@ const Todo = ({
         </li>
       )}
 
-      {isEdit && (
-        <EditTodoForm
-          todo={todo}
-          handleEditConfirm={handleEditConfirm}
-          setIsEdit={setIsEdit}
-        />
-      )}
+      {isEdit && <EditTodoForm todo={todo} setIsEdit={setIsEdit} />}
     </>
   );
 };
